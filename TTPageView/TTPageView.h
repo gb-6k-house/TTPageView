@@ -30,6 +30,7 @@ IB_DESIGNABLE
 @property(nonatomic, strong)IBInspectable UIColor* selectlineColor;
 @property(nonatomic, strong)IBInspectable UIColor* titileColor;
 
+@property(nonatomic, readonly)NSInteger selectedIndex;
 
 @property(nonatomic, weak)id<TTPageViewSource> dataSource;
 @property(nonatomic, weak)id<TTPageViewDelegate> delegate;

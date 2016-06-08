@@ -14,7 +14,7 @@
 
 @interface TTPageView()<UIScrollViewDelegate>{
     UIScrollView *_topBarScrollView;
-     ;
+    ;
     UIScrollView *_contentScrollView;
     UIView *_lineBottom;
     UIView *_topTabBottomLine;
@@ -22,7 +22,7 @@
     UIColor *_selectlineColor;
     UIColor *_underlineColor;
     NSInteger _selectIndex;
-
+    
 }
 @property(nonatomic, assign)CGFloat pageWidth; //页面宽带
 @property(nonatomic, strong)NSMutableArray *tapBarList;
@@ -85,7 +85,7 @@
     self = [super initWithCoder:aDecoder];
     [self commonInit];
     return self;
-
+    
 }
 -(void)commonInit{
     //初始化
@@ -106,7 +106,7 @@
         NSInteger topItemCount = [self.dataSource numberOfCountInPageView:self];
         CGFloat defaultWidth = topItemCount >0?[self width]/topItemCount:[self width];
         CGFloat xOffset = 0;
-        for (int i =0; i < topItemCount; i++) {
+        for (NSInteger i =0; i < topItemCount; i++) {
             [self.contenViewList addObject:@0];
             CGFloat dWidth = defaultWidth;
             if ([self.dataSource respondsToSelector:@selector(TTPageView:WidthForBarAtIndex:)]) {
@@ -180,7 +180,9 @@
         [self selectTopBarAtIndex:index];
     }
 }
-
+-(NSInteger)selectedIndex{
+    return _selectIndex;
+}
 -(void)setDefaulIndex:(CGFloat)defaulIndex{
     _defaulIndex = defaulIndex;
     [self selectTopBarAtIndex:defaulIndex];
@@ -214,7 +216,7 @@
             contenView.frame = CGRectMake(self.pageWidth*index, 0, self.pageWidth , [_contentScrollView height]);
             [_contentScrollView addSubview:contenView];
         }
-
+        
     }
     _selectIndex = index;
     [_contentScrollView setContentOffset:CGPointMake(index*self.pageWidth, 0)];
@@ -244,18 +246,18 @@
 -(void)updateContentView{
     [_contentScrollView setHeight:[self height]-self.topBarHeight];
     [_contentScrollView setWidth:[self width]];
-    for (int i =0; i < self.contenViewList.count; i++) {
+    for (NSInteger i =0; i < self.contenViewList.count; i++) {
         UIView *contenView = [self.contenViewList objectAtIndex:i];
         if([contenView isKindOfClass:[UIView class]]){
             contenView.frame = CGRectMake(self.pageWidth*i, 0, self.pageWidth , [_contentScrollView height]);
         }
     }
-
+    
 }
 -(void)updateTobarViewFrame{
     CGFloat defaultWidth = self.tapBarList.count >0?[self width]/self.tapBarList.count:[self width];
     CGFloat xOffset = 0;
-    for (int i =0; i < self.tapBarList.count; i++) {
+    for (NSInteger i =0; i < self.tapBarList.count; i++) {
         TTPageTopTabView *tpView = self.tapBarList[i];
         CGFloat dWidth = defaultWidth;
         if ([self.dataSource respondsToSelector:@selector(TTPageView:WidthForBarAtIndex:)]) {
@@ -325,8 +327,27 @@
         _titleLabel.textColor = self.unSelectColor;
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_titleLabel];
+        //        NSLayoutConstraint * left = [NSLayoutConstraint constraintWithItem:_titleFont attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0.0f];
+        //                NSLayoutConstraint * top = [NSLayoutConstraint constraintWithItem:_titleFont attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0f];
+        //                NSLayoutConstraint * right = [NSLayoutConstraint constraintWithItem:_titleFont attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0f];
+        //                NSLayoutConstraint * buttom = [NSLayoutConstraint constraintWithItem:_titleFont attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0f];
+        //         NSArray *constraints1=[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_titleLabel]-|"
+        //      options:0
+        //                                　　　　　　　　　　　　　　　　　　　　　　　　　　　metrics:nil
+        //                                 　　　　　　　　　　　　　　　　　　　　　　　　　　　views:NSDictionaryOfVariableBindings(button)];
+        //        NSArray * constraints1 = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_titleLabel]-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_titleLabel)];
+        //        NSArray * constraints2 = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_titleLabel]-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_titleLabel)];
+        //        [self addConstraints:constraints1];
+        //        [self addConstraints:constraints2];
+        
+        
+        //        [self addConstraints:@[left, top, right, buttom]];
     }
     return _titleLabel;
+}
+-(void)layoutSubviews{
+    _titleLabel.frame = self.bounds;
+    
 }
 -(void)setIndex:(NSInteger)index{
     _index = index;
@@ -347,6 +368,16 @@
     }
     return  UIColorFromRGB(0xff6262);
 }
+-(void)setFrame:(CGRect)frame{
+    if (self.isSelected) {
+        self.transform = CGAffineTransformMakeScale(1, 1);
+    }
+    [super setFrame:frame];
+    if (self.isSelected) {
+        self.transform = CGAffineTransformMakeScale(1.15, 1.15);
+    };
+}
+
 -(void)setSelected:(BOOL)selected{
     self.titleLabel.textColor = selected ? self.selectColor:self.unSelectColor;
     self.isSelected = selected;
